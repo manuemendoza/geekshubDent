@@ -1,19 +1,22 @@
 {
-  "name": "geekshubdent",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/manuemendoza/geekshubDent.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/manuemendoza/geekshubDent/issues"
-  },
-  "homepage": "https://github.com/manuemendoza/geekshubDent#readme"
+    "name": "proyectodental",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/manuemendoza/geekshubDent.git"
+    },
+    "author": "Gustavo Sierra, Stefano  Martín, Manuel Mendoza",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/manuemendoza/geekshubDent/issues"
+    },
+    "homepage": "https://github.com/manuemendoza/geekshubDent#readme",
+    "dependencies": {
+        "express": "^4.17.1"
+    }
 }
