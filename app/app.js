@@ -9,4 +9,4 @@ app = express();
 app.use("/appoinments", routerAppoinments);
 app.use("/client", routerClients);
 
-app.listen(process.env.PORT, () => console.log('El servidor esta levantado en', process.env.PORT));
+app.listen(9068, () => console.log('El servidor esta levantado en 9068'));
