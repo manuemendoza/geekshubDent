@@ -1,3 +1,4 @@
+
 const { Appoinment } = require('../../models/index');
 const { Client } = require('../../models/index')
 
@@ -43,7 +44,6 @@ appoinmentCont.getById = (req, res) => {
       });
   };
 
-
 // const createAppoinment = async(req, res) => {
 //     const appoinment = new Appoinments(req.body);
 //     console.log(appoinment);
@@ -52,6 +52,7 @@ appoinmentCont.getById = (req, res) => {
 // };
 
 // module.exports = {
-//     createAppoinment
+//     createAppoinment,
 //     appoinmentCont
+
 // }
