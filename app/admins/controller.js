@@ -1,11 +1,12 @@
-const { Client, Appoinments } = require('../../models/index');
+const { Client, Appoinments, Admin } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+//si no hay ningun usuario contenplar eso 
 const getUsers = async(req, res) => {
     try {
         if (req.query.fullName) {
-            const user = await Client.findOne({ where: { fullName: req.query.fullName } });
+            const user = await Admin.findOne({ where: { fullName: req.query.fullName } });
             if (user === null) {
                 res.json({
                     messege: 'User not found!'
@@ -14,7 +15,7 @@ const getUsers = async(req, res) => {
                 res.json(user);
             };
         } else {
-            const users = Client.findAll().then((results) => {
+            const users = Admin.findAll().then((results) => {
                 res.json(results);
             });
         };
@@ -29,7 +30,7 @@ const getUsers = async(req, res) => {
 const getUser = async(req, res) => {
     const primaryK = req.params.id
     try {
-        const user = await Client.findByPk(primaryK);
+        const user = await Admin.findByPk(primaryK);
         if (user) {
             res.json(user);
         } else {
@@ -63,7 +64,7 @@ const createUser = (req, res) => {
         userData.password = hash;
 
         try {
-            const user = Client.create(userData);
+            const user = Admin.create(userData);
             res.json('Usuario Creado');
         } catch (error) {
             console.error(error);
@@ -86,7 +87,7 @@ const loginUser = async(req, res) => {
             messege: "invalid user or password"
         }, 400);
     } else {
-        const user = await Client.findOne({ where: { email: req.query.email } });
+        const user = await Admin.findOne({ where: { email: req.query.email } });
         if (!user) {
             res.json({
                 messege: 'invalid user or password'
@@ -121,7 +122,7 @@ const updateUser = async(req, res) => {
 
     try {
         const primaryK = req.params.id;
-        const user = await Client.findByPk(primaryK)
+        const user = await Admin.findByPk(primaryK)
         const newData = req.body;
         if (user) {
 
@@ -131,8 +132,8 @@ const updateUser = async(req, res) => {
                 newData.password = hash;
             };
 
-            const userUpdate = Client.findByPk(primaryK).then(Client => {
-                Client.update(newData)
+            const userUpdate = Admin.findByPk(primaryK).then(Admin => {
+                Admin.update(newData)
             });
 
             res.json('Usuario Modificado');
@@ -150,44 +151,11 @@ const updateUser = async(req, res) => {
     }
 };
 
-// const deleteUser = async(req, res) => {
-
-//     const primaryK = req.params.id
-//     const deleteUser = await User.destroy({
-//         where: {
-//             id: primaryK
-//         }
-//     });
-
-//     // console.log(user);
-//     // const user = await Client.findByPk(primaryK);
-//     // const deleteData = await Client.destroy({
-//     //     where: user
-//     // });
-//     // console.log(deleteData);
-
-
-//     // try {
-//     //     const user = await Client.findByPk(primaryK);
-//     //     if (user) {
-//     //         res.json(user);
-//     //     } else {
-//     //         res.json({
-//     //             messege: 'user not found'
-//     //         }, 404)
-//     //     }
-//     // } catch (error) {
-//     //     console.error(error);
-//     //     res.json({
-//     //         message: error.message
-//     //     }, 500);
-//     // }
-// };
-
 module.exports = {
     createUser,
     getUser,
     getUsers,
     updateUser,
-    loginUser
+    loginUser,
+
 }
