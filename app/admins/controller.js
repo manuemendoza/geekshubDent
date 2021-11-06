@@ -150,6 +150,25 @@ const updateUser = async(req, res) => {
         }, 500);
     }
 };
+const deleteUser = async(req, res) => {
+    const primaryK = req.params.id
+    try {
+        const user = await Admin.findByPk(primaryK);
+        if (user) {
+            res.json(user);
+            await user.destroy({
+                where: { id: primaryK }
+            });
+        } else {
+            res.json('user not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
+    }
+};
 
 module.exports = {
     createUser,
