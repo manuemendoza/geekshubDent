@@ -1,4 +1,4 @@
-const { Client, Appoinments } = require('../../models/index');
+const { Client, Appoinment } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
