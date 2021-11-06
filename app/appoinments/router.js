@@ -3,8 +3,8 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 // router.get('/:id', controller);
-router.post('/', controller.createAppoinments);
-// router.post('/', controller);
+// router.get('/', controller);
+// router.post('/', controller.createAppoinment);
 // router.put('/:id', controller);
 // router.delete('/id', controller);
 
