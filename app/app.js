@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 
-
 const routerAppoinments = require('./appoinments/router');
 // const routerClients = require('./clients/router');
 
