@@ -1,10 +1,16 @@
 // const express = require('express');
-// const Appoinments = require('./appointmentsmodel');
-
+const {Appointments} = require('../../models/appointment')
 
 // // const getAppoinments = (req, res) => {
 // //     const appoinments
 // // };
+
+const createAppoinments = async (req, res) => {
+    const user = Appointments.create(req.body);
+    await user.save();
+    console.log(user);
+};
+
 
 // const createAppoinment = async(req, res) => {
 //     const appoinment = new Appoinments(req.body);
@@ -13,6 +19,6 @@
 //     res.json()
 // };
 
-// module.exports = {
-//     createAppoinment
-// }
+module.exports = {
+    createAppoinments
+}

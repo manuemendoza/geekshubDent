@@ -1,13 +1,11 @@
-// const express = require('express');
-// const { AppointmentsModel } = require('./appointmentsmodel')
+const {Appointments} = require('../../models/appointment')
 
-// const createUser = (req, res) => {
-//     const user = AppointmentsModel.create(req.body);
-//     user.save();
-//     console.log(user);
+const createUser = async (req, res) => {
+    const user = Appointments.create(req.body);
+    await user.save();
+    console.log(user);
+};
 
-// };
-
-// module.exports = {
-//     createUser
-// }
+module.exports = {
+    createUser
+}
