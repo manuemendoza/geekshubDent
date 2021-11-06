@@ -1,41 +1,48 @@
 const { Client, Appoinments } = require('../../models/index');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const getUsers = async(req, res) => {
-    if (req.query.fullName) {
-        const user = await Client.findOne({ where: { fullName: req.query.fullName } });
-        if (user === null) {
-            res.json({
-                messege: 'User not found!'
-            }, 404)
+    try {
+        if (req.query.fullName) {
+            const user = await Client.findOne({ where: { fullName: req.query.fullName } });
+            if (user === null) {
+                res.json({
+                    messege: 'User not found!'
+                }, 404);
+            } else {
+                res.json(user);
+            };
         } else {
+            const users = Client.findAll().then((results) => {
+                res.json(results);
+            });
+        };
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
+    };
+};
+
+const getUser = async(req, res) => {
+    const primaryK = req.params.id
+    try {
+        const user = await Client.findByPk(primaryK);
+        if (user) {
             res.json(user);
+        } else {
+            res.json({
+                messege: 'user not found'
+            }, 404)
         }
-    } else {
-        const user = Client.findAll().then((results) => {
-            res.json(results);
-        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
     }
-
-
-    // try {
-    //     if (req.query.fullName) {
-    //         const users = await Client.find({ name: { $regex: new RegExp(req.query.fullName, 'i') } });
-    //         res.json({
-    //             user: users
-    //         });
-    //     } else {
-    //         res.json({
-    //             users: await User.find()
-    //         });
-    //     }
-    // } catch (error) {
-    //     console.error(error);
-    //     res.json({
-    //         message: error.message
-    //     }, 500);
-    // }
 };
 
 const createUser = (req, res) => {
@@ -44,6 +51,7 @@ const createUser = (req, res) => {
             messege: 'password is required'
         }, 400)
     } else {
+
         const userData = req.body;
 
         if (!req.toke || req.toke.role == 'user') {
@@ -54,32 +62,131 @@ const createUser = (req, res) => {
         const hash = bcrypt.hashSync(req.body.password, salt);
         userData.password = hash;
 
-        const user = Client.create(userData);
-
-        res.json('creado el usuario: ', userData.fullName);
-        // try {
-        //     res.json('creado el usuario: ', userData.fullName);
-        // } catch (error) {
-        //     console.error(error);
-        //     if (error.messege == 'ValidationError') {
-        //         res.json({
-        //             messege: error.messege
-        //         }, 400);
-        //     } else {
-        //         res.json({
-        //             messege: error.messege
-        //         }, 500);
-        //     }
-        // }
+        try {
+            const user = Client.create(userData);
+            res.json('Usuario Creado');
+        } catch (error) {
+            console.error(error);
+            if (error.message == "ValidationError") {
+                res.json({
+                    message: error.message
+                }, 400);
+            } else {
+                res.json({
+                    message: error.message
+                }, 500);
+            }
+        };
     };
+};
 
-    // const userData = req.body
-    // console.log(typeof userData);
-    // const prueba = Client.create(userData);
-    // res.json(prueba);
-}
+const loginUser = async(req, res) => {
+    if (!req.body.email || !req.body.password) {
+        res.json({
+            messege: "invalid user or password"
+        }, 400);
+    } else {
+        const user = await Client.findOne({ where: { email: req.query.email } });
+        if (!user) {
+            res.json({
+                messege: 'invalid user or password'
+            }, 400);
+        } else {
+            try {
+                const validated = bcrypt.compareSync(req.body.password, user.password);
+                if (validated) {
+                    const token = jwt.sign({
+                        _id: user._id,
+                        role: user.role
+                    }, process.env.PRIVATE_KEY, {
+                        expiresIn: '4h'
+                    });
+                    res.json(token);
+                } else {
+                    res.json({
+                        message: "invalid user or password"
+                    }, 400);
+                }
+            } catch (error) {
+                console.error(error);
+                res.json({
+                    message: error.message
+                }, 500);
+            }
+        }
+    }
+};
+
+const updateUser = async(req, res) => {
+
+    try {
+        const primaryK = req.params.id;
+        const user = await Client.findByPk(primaryK)
+        const newData = req.body;
+        if (user) {
+
+            if (req.body.password) {
+                const salt = bcrypt.genSaltSync(7);
+                const hash = bcrypt.hashSync(req.body.password, salt);
+                newData.password = hash;
+            };
+
+            const userUpdate = Client.findByPk(primaryK).then(Client => {
+                Client.update(userUpdate)
+            });
+
+            res.json('Usuario Modificado');
+
+        } else {
+            res.json({
+                message: 'user not found'
+            }, 404);
+        }
+    } catch (error) {
+
+    }
+
+
+};
+
+// const deleteUser = async(req, res) => {
+
+//     const primaryK = req.params.id
+//     const deleteUser = await User.destroy({
+//         where: {
+//             id: primaryK
+//         }
+//     });
+
+//     // console.log(user);
+//     // const user = await Client.findByPk(primaryK);
+//     // const deleteData = await Client.destroy({
+//     //     where: user
+//     // });
+//     // console.log(deleteData);
+
+
+//     // try {
+//     //     const user = await Client.findByPk(primaryK);
+//     //     if (user) {
+//     //         res.json(user);
+//     //     } else {
+//     //         res.json({
+//     //             messege: 'user not found'
+//     //         }, 404)
+//     //     }
+//     // } catch (error) {
+//     //     console.error(error);
+//     //     res.json({
+//     //         message: error.message
+//     //     }, 500);
+//     // }
+// };
 
 module.exports = {
     createUser,
-    getUsers
+    getUser,
+    getUsers,
+    updateUser,
+    loginUser
 }
