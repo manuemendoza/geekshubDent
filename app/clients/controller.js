@@ -2,7 +2,41 @@ const { Client, Appoinments } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
+const getUsers = async(req, res) => {
+    if (req.query.fullName) {
+        const user = await Client.findOne({ where: { fullName: req.query.fullName } });
+        if (user === null) {
+            res.json({
+                messege: 'User not found!'
+            }, 404)
+        } else {
+            res.json(user);
+        }
+    } else {
+        const user = Client.findAll().then((results) => {
+            res.json(results);
+        });
+    }
 
+
+    // try {
+    //     if (req.query.fullName) {
+    //         const users = await Client.find({ name: { $regex: new RegExp(req.query.fullName, 'i') } });
+    //         res.json({
+    //             user: users
+    //         });
+    //     } else {
+    //         res.json({
+    //             users: await User.find()
+    //         });
+    //     }
+    // } catch (error) {
+    //     console.error(error);
+    //     res.json({
+    //         message: error.message
+    //     }, 500);
+    // }
+};
 
 const createUser = (req, res) => {
     if (!req.body.password) {
@@ -46,5 +80,6 @@ const createUser = (req, res) => {
 }
 
 module.exports = {
-    createUser
+    createUser,
+    getUsers
 }
