@@ -132,7 +132,7 @@ const updateUser = async(req, res) => {
             };
 
             const userUpdate = Client.findByPk(primaryK).then(Client => {
-                Client.update(userUpdate)
+                Client.update(newData)
             });
 
             res.json('Usuario Modificado');
@@ -143,10 +143,11 @@ const updateUser = async(req, res) => {
             }, 404);
         }
     } catch (error) {
-
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
     }
-
-
 };
 
 // const deleteUser = async(req, res) => {
