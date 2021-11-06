@@ -150,39 +150,25 @@ const updateUser = async(req, res) => {
     }
 };
 
-// const deleteUser = async(req, res) => {
-
-//     const primaryK = req.params.id
-//     const deleteUser = await User.destroy({
-//         where: {
-//             id: primaryK
-//         }
-//     });
-
-//     // console.log(user);
-//     // const user = await Client.findByPk(primaryK);
-//     // const deleteData = await Client.destroy({
-//     //     where: user
-//     // });
-//     // console.log(deleteData);
-
-
-//     // try {
-//     //     const user = await Client.findByPk(primaryK);
-//     //     if (user) {
-//     //         res.json(user);
-//     //     } else {
-//     //         res.json({
-//     //             messege: 'user not found'
-//     //         }, 404)
-//     //     }
-//     // } catch (error) {
-//     //     console.error(error);
-//     //     res.json({
-//     //         message: error.message
-//     //     }, 500);
-//     // }
-// };
+const deleteUser = async(req, res) => {
+            const primaryK = req.params.id
+            try {
+                const user = await Client.findByPk(primaryK);
+                if (user) {
+                    res.json(user);
+                    await user.destroy({
+                        where: { id: primaryK }
+                    });
+                } else {
+                    res.json('user not found');
+                }
+            } catch (error) {
+                console.error(error);
+                res.json({
+                    message: error.message
+                }, 500);
+            }
+        };
 
 module.exports = {
     createUser,
@@ -190,4 +176,5 @@ module.exports = {
     getUsers,
     updateUser,
     loginUser
+
 }
