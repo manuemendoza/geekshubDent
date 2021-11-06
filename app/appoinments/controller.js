@@ -44,7 +44,7 @@ const appoinmentCont = {};
 //   };
 
 const createAppoinment = async(req, res) => {
-    const appoinment = new Appoinments(req.body);
+    const appoinment = new Appoinment(req.body);
     console.log(appoinment);
     await appoinment.save()
     res.json()
