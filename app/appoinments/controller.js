@@ -1,4 +1,3 @@
-
 const { Appoinment } = require('../../models/index');
 const { Client } = require('../../models/index')
 
