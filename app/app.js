@@ -11,7 +11,7 @@ const app = express();
 
 app.use(express.json());
 app.use("/appoinments", routerAppoinments);
-app.use("/client", routerClients);
-app.use("/admin", routerAdmins);
+app.use("/clients", routerClients);
+app.use("/admins", routerAdmins);
 
 app.listen(process.env.PORT, () => console.log('El servidor esta levantado en', process.env.PORT));

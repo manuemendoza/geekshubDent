@@ -14,9 +14,9 @@ const checkToken = (req, res, next, requiredRole) => {
         let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
         try {
             console.log(userToken.role);
-            if (requiredRole == 'user' ||
+            if (requiredRole == 'client' ||
                 userToken.role == 'admin' ||
-                (req.path.startsWith('/client') && req.path.startsWith('/admin') && req.params.id === userToken._id) // perfil del propio usuario autenticado
+                (req.path.startsWith('/clients') && req.params.id === userToken.id) // perfil del propio cliente autenticado
             ) {
                 req.token = userToken;
                 console.log(userToken);
@@ -29,7 +29,7 @@ const checkToken = (req, res, next, requiredRole) => {
             }
         } catch (error) {
             res.json({
-                message: 'user not authenticated que te peines'
+                message: 'user not authenticated'
             }, 401);
         }
     } else {
@@ -39,8 +39,8 @@ const checkToken = (req, res, next, requiredRole) => {
     }
 }
 
-const checkUser = (req, res, next) => {
-    checkToken(req, res, next, 'user');
+const checkClient = (req, res, next) => {
+    checkToken(req, res, next, 'client');
 };
 
 const checkAdminOrOwn = (req, res, next) => {
@@ -48,6 +48,6 @@ const checkAdminOrOwn = (req, res, next) => {
 }
 
 module.exports = {
-    checkUser,
+    checkClient,
     checkAdminOrOwn
 };

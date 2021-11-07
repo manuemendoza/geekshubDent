@@ -1,23 +1,26 @@
-const { Client, Appoinment } = require('../../models/index');
+const { Client, sequelize: { Op } } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const getUsers = async(req, res) => {
-    try {
-        if (req.query.fullName) {
-            const user = await Client.findOne({ where: { fullName: req.query.fullName } });
-            if (user === null) {
-                res.json({
-                    messege: 'User not found!'
-                }, 404);
-            } else {
-                res.json(user);
-            };
-        } else {
-            const users = Client.findAll().then((results) => {
-                res.json(results);
-            });
+    const name = req.query.fullName;
+    let filters = {
+        where: {}
+    };
+
+    if (req.role == 'client') {
+        filters.where.id = req.id;
+    }
+
+    if (name) {
+        filters.where.fullName = {
+            [Op.like]: name
         };
+    }
+
+    try {
+        const client = await Client.findAll(filters);
+        res.json(client);
     } catch (error) {
         console.error(error);
         res.json({
@@ -27,14 +30,14 @@ const getUsers = async(req, res) => {
 };
 
 const getUser = async(req, res) => {
-    const primaryK = req.params.id
+    const primaryK = req.params.id;
     try {
-        const user = await Client.findByPk(primaryK);
-        if (user) {
-            res.json(user);
+        const client = await Client.findByPk(primaryK);
+        if (client) {
+            res.json(client);
         } else {
             res.json({
-                messege: 'user not found'
+                messege: 'client not found'
             }, 404)
         }
     } catch (error) {
@@ -45,31 +48,29 @@ const getUser = async(req, res) => {
     }
 };
 
-const createUser = (req, res) => {
+const createUser = async(req, res) => {
     if (!req.body.password) {
         res.json({
-            messege: 'password is required'
+            message: 'password is required'
         }, 400)
     } else {
 
-        const userData = req.body;
-
-        if (!req.toke || req.toke.role == 'user') {
-            delete userData.role
-        };
+        const clientData = req.body;
 
         const salt = bcrypt.genSaltSync(7);
         const hash = bcrypt.hashSync(req.body.password, salt);
-        userData.password = hash;
+        clientData.password = hash;
 
         try {
-            const user = Client.create(userData);
-            res.json('Usuario Creado');
+            const client = await Client.create(clientData);
+            res.json({
+                client
+            }, 201);
         } catch (error) {
             console.error(error);
-            if (error.message == "ValidationError") {
+            if (error.message == "Validation error") { // @TODO: include mysql validation errors
                 res.json({
-                    message: error.message
+                    message: error.original.message
                 }, 400);
             } else {
                 res.json({
@@ -86,20 +87,20 @@ const loginUser = async(req, res) => {
             messege: "invalid user or password"
         }, 400);
     } else {
-        const user = await Client.findOne({ where: { email: req.query.email } });
-        if (!user) {
+        const client = await Client.findOne({ where: { email: req.query.email } });
+        if (!client) {
             res.json({
                 messege: 'invalid user or password'
             }, 400);
         } else {
             try {
-                const validated = bcrypt.compareSync(req.body.password, user.password);
+                const validated = bcrypt.compareSync(req.body.password, client.password);
                 if (validated) {
                     const token = jwt.sign({
-                        _id: user._id,
-                        role: user.role
+                        id: client.id,
+                        role: 'client'
                     }, process.env.PRIVATE_KEY, {
-                        expiresIn: '4h'
+                        expiresIn: '24h'
                     });
                     res.json(token);
                 } else {
@@ -121,22 +122,16 @@ const updateUser = async(req, res) => {
 
     try {
         const primaryK = req.params.id;
-        const user = await Client.findByPk(primaryK)
+        const client = await Client.findByPk(primaryK);
         const newData = req.body;
-        if (user) {
-
+        if (client) {
             if (req.body.password) {
                 const salt = bcrypt.genSaltSync(7);
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 newData.password = hash;
             };
-
-            const userUpdate = Client.findByPk(primaryK).then(Client => {
-                Client.update(newData)
-            });
-
-            res.json('Usuario Modificado');
-
+            const clientUpdate = await client.update(newData);
+            res.json(clientUpdate);
         } else {
             res.json({
                 message: 'user not found'
@@ -151,16 +146,20 @@ const updateUser = async(req, res) => {
 };
 
 const deleteUser = async(req, res) => {
-    const primaryK = req.params.id
+    const primaryK = req.params.id;
     try {
-        const user = await Client.findByPk(primaryK);
-        if (user) {
-            res.json(user);
-            await user.destroy({
+        const client = await Client.findByPk(primaryK);
+        if (client) {
+            await Client.destroy({
                 where: { id: primaryK }
             });
+            res.json({
+                message: "client deleted"
+            });
         } else {
-            res.json('user not found');
+            res.json({
+                message: 'client not found'
+            }, 404);
         }
     } catch (error) {
         console.error(error);
