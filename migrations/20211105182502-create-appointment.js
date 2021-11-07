@@ -3,23 +3,25 @@ module.exports = {
     up: async(queryInterface, Sequelize) => {
         await queryInterface.createTable('Appointments', {
             id: {
-                allowNull: false,
-                autoIncrement: true,
+                type: Sequelize.INTEGER,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                allowNull: false,
+                autoIncrement: true
             },
-            dateNumeber: {
-                type: Sequelize.INTEGER
+            startsAt: {
+                type: Sequelize.DATE,
+                notNull: true //2021-10-2 13:30
             },
-            date: {
-                type: Sequelize.DATEONLY
+            endsAt: {
+                type: Sequelize.DATE,
+                notNull: true //2021-10-2 15:30
             },
             createdAt: {
-                allowNull: false,
+                notNull: true,
                 type: Sequelize.DATE
             },
             updatedAt: {
-                allowNull: false,
+                notNull: true,
                 type: Sequelize.DATE
             }
         });
