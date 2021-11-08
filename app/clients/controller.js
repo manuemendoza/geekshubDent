@@ -102,8 +102,8 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
-                    const createToken = await Token.create({ toke: token })
-                        //** @TODO : TENGO QUE GUARDARLO EN LA BASE DE DATOS TOKEN QUE YA TENGO CREADO junto con id y hacer un update cuando eliminir*/
+
+                    const createToke = await Token.create({ token: token, userId: client.id  }); //@todo: crear base de datos y ver si esto es viab
                     res.json(token);
                 } else {
                     res.json({
@@ -120,7 +120,15 @@ const loginUser = async(req, res) => {
     }
 };
 
-const logoutUser = (req, res) => {};
+const logoutUser = async(req, res) => {
+    const client = await findOne({
+        where: email //esto esta mal solo es para ver como puedo hacerlo
+    });
+    const usuarioToken = await Token.findOne(client.id)
+    const borradoToken = await Token.destroy({
+        token: usuarioToken.token
+    })
+};
 
 const updateUser = async(req, res) => {
 
