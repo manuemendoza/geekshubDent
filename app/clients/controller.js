@@ -1,4 +1,4 @@
-const { Client, sequelize: { Op } } = require('../../models/index');
+const { Client, sequelize: { Op }, Token } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -102,6 +102,8 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
+                    const createToke = await Token.create({ token: token }); //@todo: crear base de datos y ver si esto es viable
+                    const idAssignment = await Token.create({ userId: client.id });
                     res.json(token);
                 } else {
                     res.json({
@@ -116,6 +118,16 @@ const loginUser = async(req, res) => {
             }
         }
     }
+};
+
+const logoutUser = async(req, res) => {
+    const client = await findOne({
+        where: email //esto esta mal solo es para ver como puedo hacerlo
+    });
+    const usuarioToken = await Token.findOne(client.id)
+    const borradoToken = await Token.destroy({
+        token: usuarioToken.token
+    })
 };
 
 const updateUser = async(req, res) => {
