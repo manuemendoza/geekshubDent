@@ -1,7 +1,7 @@
 {
     "development": {
         "username": "root",
-        "password": "251290samuel",
+        "password": "Gasm2910",
         "database": "geekshubDent_db",
         "host": "127.0.0.1",
         "dialect": "mysql"

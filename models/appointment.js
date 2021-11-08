@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Appointment.init({
     datenumber: DataTypes.INTEGER,
-    date: DataTypes.DATEONLY
+    date: DataTypes.DATEONLY 
   }, {
     sequelize,
     modelName: 'Appointment',

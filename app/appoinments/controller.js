@@ -1,35 +1,55 @@
-const { Appoinment } = require('../../models/index');
-const { Client } = require('../../models/index')
+const { Appointment, sequelize: {Op} } = require('../../models/index.js');
+const { Client } = require('../../models/index.js')
+const { Admin } = require('../../models/index.js')
 
-const appoinmentCont = {};
 
-appoinmentCont.getAll = (req, res) => {
-    try{
-        Appoinment.findAll()
-        .then(data => {
-            res.json(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-            message:
-                err.message || "Ha surgido algún error al intentar acceder a las citas."
-            });
-        });
-    }
-    catch{
-        res.json({
-            message: 'Algo ha ido mal'
-        })
-    }
+const appoinmentCreate = async(req, res) => {
+      try{
+        if (!req.body.date) {
+          res.status(400).send({
+            message: "El contenido no puede estar vacío"
+          });
+        } else{
+            const newAppoinment = req.body.date;
+            
+            const appoinment = await Appointment.create(newAppoinment);
+            res.status(200).json({ appoinment, message: 'Su cita ha sido creada'}); 
+
+            // Dice que está deprecado el método res.json() que usemos res.status.json
+          };
+      }catch (error) {
+         res.status(500).send({
+            message: "Ha surgido algún error al intentar crear la cita."
+          });
+        };
 };
 
-appoinmentCont.getById = (req, res) => {
+const appoinmentGetAll = async (req, res) => {
+      const user = req.query.date
+ //   try{
+        let data = {
+          where:{}
+        };
+        if(user){
+          data.where.date = {[Op.like]: date}
+        }
+        const buscar = await Appointment.findAll(data);
+        res.json(buscar);
+  }
+ //   catch{
+  //      res.json({
+  //          message: 'Algo ha ido mal'
+   //     })
+    //}
+//};
+
+const appoinmentGetById = (req, res) => {
     const id = req.params.id;
   
-    Appoinment.findByPk(id)
+    Appointment.findByPk(id)
       .then(data => {
-        if (data) {
-          res.send(data);
+        if (id) {
+          res.json(data);
         } else {
           res.status(404).send({
             message: `No existe la cita con el id ${id}.`
@@ -43,13 +63,13 @@ appoinmentCont.getById = (req, res) => {
       });
 };
 
-appoinmentCont.update = (req, res) => {
+const appoinmentUpdate = (req, res) => {
 
-    if (req.user.usuario.role == "admin") {
+    if (req.user.Admin.role == "admin") {
   
             const id = req.params.id;
   
-            Appoinment.update(req.body, {
+            Appointment.update(req.body, {
               where: { id: id }
             })
               .then(num => {
@@ -75,13 +95,13 @@ appoinmentCont.update = (req, res) => {
     }
   };
 
-  appoinmentCont.delete = (req, res) => {
+const appoinmentDelete = (req, res) => {
 
     if (req.body.Client.rol == "admin" || req.user.Client.id == req.body.clientId) {
   
           const id = req.params.id;
   
-          Appoinment.destroy({
+          Appointment.destroy({
               where: { id: id }
           })
               .then(num => {
@@ -107,15 +127,10 @@ appoinmentCont.update = (req, res) => {
     }
   };
 
-// const createAppoinment = async(req, res) => {
-//     const appoinment = new Appoinments(req.body);
-//     console.log(appoinment);
-//     await appoinment.save()
-//     res.json()
-// };
-
-// module.exports = {
-//     createAppoinment,
-//     appoinmentCont
-
-// }
+module.exports = {
+  appoinmentCreate,
+  appoinmentGetAll,
+  appoinmentGetById,
+  appoinmentUpdate,
+  appoinmentDelete
+}
