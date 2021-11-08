@@ -8,6 +8,6 @@ router.get('/', auth.checkAdminOrOwn, controller.getUsers);
 router.post('/', auth.checkAdminOrOwn, controller.createUser);
 router.post('/login', controller.loginUser);
 router.put('/:id', auth.checkAdminOrOwn, controller.updateUser);
-router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
+// router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
 
 module.exports = router;
