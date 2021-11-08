@@ -61,7 +61,6 @@ const appoinmentGetById = (req, res) => {
           message: "Ha surgido algún error al intentar acceder a la cita con el id " + id + "."
         });
       });
-};
 
 const appoinmentUpdate = (req, res) => {
 
@@ -133,4 +132,4 @@ module.exports = {
   appoinmentGetById,
   appoinmentUpdate,
   appoinmentDelete
-}
+}}
