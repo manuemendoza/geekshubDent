@@ -1,3 +1,4 @@
+const { where } = require('sequelize/types');
 const { Appoinment } = require('../../models/index');
 const { Client } = require('../../models/index')
 
@@ -41,12 +42,40 @@ const { Client } = require('../../models/index')
 //       });
 //   };
 
-const createAppoinment = (req, res) => {
-    const appoinment = Appoinment.create(req.body);
+const createAppoinment = async(req, res) => {
+    const appoinment = await Appoinment.create(req.body);
     console.log(appoinment);
-    // await appoinment.save()
-    // res.json()
+
+    res.json('su numero de cita es', appoinment.id);
 };
+
+const deleteAppoinmet = async(req, res) => {
+    const appoinmentId = req.params.id;
+    const appoinment = await Appoinment.findbyPk(appoinmentId);
+    try {
+        if (appoinment) {
+            await Appoinment.destroy({
+                where: {
+                    id: appoinmentId
+                }
+            });
+            res.json({
+                message: 'appoinmet deleted'
+            }, 200);
+        } else {
+            res.json({
+                message: 'appoinmet not found'
+            }, 404);
+        }
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
+    }
+};
+
+
 
 module.exports = {
     createAppoinment
