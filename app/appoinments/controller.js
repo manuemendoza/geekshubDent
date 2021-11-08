@@ -1,8 +1,6 @@
 const { Appoinment } = require('../../models/index');
 const { Client } = require('../../models/index')
 
-const appoinmentCont = {};
-
 // appoinmentCont.getAll = (req, res) => {
 //     try{
 //         Appoinment.findAll()
@@ -25,7 +23,7 @@ const appoinmentCont = {};
 
 // appoinmentCont.getById = (req, res) => {
 //     const id = req.params.id;
-  
+
 //     Appoinment.findByPk(id)
 //       .then(data => {
 //         if (data) {
@@ -43,25 +41,13 @@ const appoinmentCont = {};
 //       });
 //   };
 
-
-const createAppoinments = async (req, res) => {
-    const user = Appointments.create(req.body);
-    await user.save();
-    console.log(user);
+const createAppoinment = (req, res) => {
+    const appoinment = Appoinment.create(req.body);
+    console.log(appoinment);
+    // await appoinment.save()
+    // res.json()
 };
 
-
-// const createAppoinment = async(req, res) => {
-//     const appoinment = new Appoinments(req.body);
-//     console.log(appoinment);
-//     await appoinment.save()
-//     res.json()
-// };
-
-// module.exports = {
-//     createAppoinment,
-//     appoinmentCont
-
-// }
-
-
+module.exports = {
+    createAppoinment
+}
