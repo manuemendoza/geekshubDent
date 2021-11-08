@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const { Client, Appoinments, Admin } = require('../../models/index');
-=======
 const { Client, sequelize: { Op } } = require('../../models/index');
->>>>>>> origin
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 

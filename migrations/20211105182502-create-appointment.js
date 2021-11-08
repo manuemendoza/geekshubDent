@@ -9,12 +9,10 @@ module.exports = {
                 autoIncrement: true
             },
             startsAt: {
-                type: Sequelize.DATE,
-                notNull: true //2021-10-2 13:30
+                type: Sequelize.DATE
             },
             endsAt: {
-                type: Sequelize.DATE,
-                notNull: true //2021-10-2 15:30
+                type: Sequelize.DATE
             },
             createdAt: {
                 notNull: true,
