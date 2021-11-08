@@ -102,8 +102,8 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
-                    const createToke = await Token.create({ token: token }); //@todo: crear base de datos y ver si esto es viable
-                    const idAssignment = await Token.create({ userId: client.id });
+
+                    const createToke = await Token.create({ token: token, userId: client.id  }); //@todo: crear base de datos y ver si esto es viab
                     res.json(token);
                 } else {
                     res.json({
