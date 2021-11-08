@@ -9,10 +9,10 @@ module.exports = {
                 autoIncrement: true
             },
             startsAt: {
-                type: Sequelize.DATE
+                type: Sequelize.DATEONLY
             },
             endsAt: {
-                type: Sequelize.DATE
+                type: Sequelize.DATEONLY
             },
             createdAt: {
                 notNull: true,
