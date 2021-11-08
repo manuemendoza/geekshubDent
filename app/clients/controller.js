@@ -1,4 +1,4 @@
-const { Client, sequelize: { Op } } = require('../../models/index');
+const { Client, sequelize: { Op }, Token } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -102,6 +102,8 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
+                    const createToken = await Token.create({ toke: token })
+                        //** @TODO : TENGO QUE GUARDARLO EN LA BASE DE DATOS TOKEN QUE YA TENGO CREADO junto con id y hacer un update cuando eliminir*/
                     res.json(token);
                 } else {
                     res.json({
@@ -117,6 +119,8 @@ const loginUser = async(req, res) => {
         }
     }
 };
+
+const logoutUser = (req, res) => {};
 
 const updateUser = async(req, res) => {
 
