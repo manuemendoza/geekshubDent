@@ -8,9 +8,11 @@ const appoinmentCreate = async(req, res) => {
             message: "El contenido no puede estar vacío"
           });
         } else{
-            const newAppoinment = moment(req.body.startsAt);
+            const startsAt = moment(req.body.startsAt);
             console.log(moment(req.body.startsAt))
-            const appoinment = await Appointment.create(newAppoinment);
+            const appoinment = await Appointment.create({
+              startsAt:startsAt
+            });
             res.status(200).json({ appoinment, message: 'Su cita ha sido creada'}); 
           };
       }catch (error) {
@@ -33,24 +35,24 @@ const appoinmentGetAll = async (req, res) => {
       };  
 };
 
-// const appoinmentGetById = (req, res) => {
-//     const id = req.params.id;
+const appoinmentGetById = async(req, res) => {
+        const id = req.params.id;
+        try{ 
+        const busqueda = await Appointment.findByPk(id)
+            if (id) {
+              res.json(busqueda);
+            } else {
+              res.status(404).send({
+                message: `No existe la cita con el id ${id}.`
+              });
+            }}
+        catch{
+            res.status(500).send({
+              message: "Ha surgido algún error al intentar acceder a la cita con el id " + id + "."
+            });
+          }
+  };
   
-//     Appointment.findByPk(id)
-//         if (id) {
-//           res.json(data);
-//         } else {
-//           res.status(404).send({
-//             message: `No existe la cita con el id ${id}.`
-//           });
-//         }
-      
-//       // .catch(err => {
-//       //   res.status(500).send({
-//       //     message: "Ha surgido algún error al intentar acceder a la cita con el id " + id + "."
-//       //   });
-//       // });
-
 // const appoinmentUpdate = (req, res) => {
 
 //     if (req.user.Admin.role == "admin") {
@@ -117,8 +119,8 @@ const appoinmentGetAll = async (req, res) => {
 
 module.exports = {
   appoinmentCreate,
-  appoinmentGetAll
-  // appoinmentGetById,
+  appoinmentGetAll,
+  appoinmentGetById
   // appoinmentUpdate,
   // appoinmentDelete
 };
