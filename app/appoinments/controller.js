@@ -43,13 +43,19 @@ const appoinmentCont = {};
 //       });
 //   };
 
-const createAppoinment = async(req, res) => {
-    const appoinment = new Appoinment(req.body);
-    console.log(appoinment);
-    await appoinment.save()
-    res.json()
-};
+// const createAppoinment = async(req, res) => {
+//     const appoinment = new Appoinment(req.body);
+//     console.log(appoinment);
+//     await appoinment.save()
+//     res.json()
+// };
+const createAppoinment2 = (req, res) => {
+    // const appoinment = await Appoinment.create(req.body);
+    const prueba = req.body;
+    console.log(prueba)
+        res.json('Cita Creada');
+}
 
 module.exports = {
-    createAppoinment,
+    createAppoinment2
 }
