@@ -1,52 +1,118 @@
-const { where } = require('sequelize/types');
-const { Appoinment } = require('../../models/index');
-const { Client } = require('../../models/index')
+const moment = require('moment');
+const { Appointment, Client, Admin, sequelize: { Op } } = require('../../models/index');
 
-// appoinmentCont.getAll = (req, res) => {
-//     try{
-//         Appoinment.findAll()
-//         .then(data => {
-//             res.json(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//             message:
-//                 err.message || "Ha surgido algún error al intentar acceder a las citas."
-//             });
-//         });
-//     }
-//     catch{
-//         res.json({
-//             message: 'Algo ha ido mal'
-//         })
-//     }
-// };
+const appoinmentGetAll = async(req, res) => {
+    const date = moment(req.query.startsAt);
 
-// appoinmentCont.getById = (req, res) => {
-//     const id = req.params.id;
+    const filter = {
+        where: {}
+    };
 
-//     Appoinment.findByPk(id)
-//       .then(data => {
-//         if (data) {
-//           res.send(data);
-//         } else {
-//           res.status(404).send({
-//             message: `No existe la cita con el id ${id}.`
-//           });
-//         }
-//       })
-//       .catch(err => {
-//         res.status(500).send({
-//           message: "Ha surgido algún error al intentar acceder a la cita con el id " + id + "."
-//         });
-//       });
-//   };
+    if (date) {
+        filter.where.startsAt = {
+            [Op.gte]: date
+        };
+    }
 
-const createAppoinment = async(req, res) => {
-    const appoinment = await Appoinment.create(req.body);
-    console.log(appoinment);
+    if (req.role == 'client') {
+        filters.where.id = req.id;
+    }
 
-    res.json('su numero de cita es', appoinment.id);
+    try {
+        const busqueda = await Appointment.findAll(filter);
+        res.json(busqueda);
+    } catch (error) {
+        res.json({
+            message: error.message
+        }, 500);
+    };
+};
+
+const appoinmentGetById = async(req, res) => {
+    const id = req.params.id;
+    try {
+        const busqueda = await Appointment.findByPk(id);
+        if (busqueda) {
+            res.json(busqueda);
+        } else {
+            res.status(404).send({
+                message: `No existe la cita con el id ${id}.`
+            });
+        }
+    } catch {
+        res.status(500).send({
+            message: "Ha surgido algún error al intentar acceder a la cita con el id " + id + "."
+        });
+    }
+};
+const appoinmentCreate = async(req, res) => {
+    const startAt = moment(req.body.startsAt);
+    const endsAt = startAt.clone().add(2, 'hours');
+    try {
+        if (!date) {
+            res.status(400).send({
+                message: "El contenido no puede estar vacío"
+            });
+        } else {
+            /**
+             * select * from appointments where
+             * (appointments.startsAt > STARTSAT and appointments.startsAt < ENDSAT) or
+             * (appointments.endsAt > STARTAT and appointments.endsAt < ENDSAT) or
+             * (STARTSAT > appointment.startsAt and STARTSAT < appointments.endsAt) or
+             * (ENDSAT > appointment.startsAt and ENDSAT < appointment.endsAt)
+             */
+            const matches = await Appointment.findAll({
+                where: {
+                    [Op.or]: [{
+                            startsAt: {
+                                [Op.gt]: startsAt,
+                                [Op.lt]: endsAt
+                            }
+                        },
+                        {
+                            endsAt: {
+                                [Op.gt]: startsAt,
+                                [Op.lt]: endsAt
+                            }
+                        },
+                        {
+                            startsAt: {
+                                [Op.lt]: startsAt
+                            },
+                            endsAt: {
+                                [Op.gt]: startsAt
+                            }
+                        },
+                        {
+                            startsAt: {
+                                [Op.lt]: endsAt
+                            },
+                            endsAt: {
+                                [Op.gt]: endsAt
+                            }
+                        }
+                    ]
+                }
+            });
+
+            if (matches.length > 0) {
+                res.json({
+                    message: 'timeframe is already taken'
+                }, 400);
+            } else {
+                const startsAt = moment(req.body.startsAt);
+                const appoinment = await Appointment.create({
+                    startsAt: startsAt,
+                    endsAt: endsAt
+                });
+                res.status(200).json({ appoinment, message: 'Su cita ha sido creada' });
+            }
+        };
+    } catch (error) {
+        res.status(500).send({
+            message: "Ha surgido algún error al intentar crear la cita."
+        });
+    };
 };
 
 const deleteAppoinmet = async(req, res) => {
@@ -77,6 +143,6 @@ const deleteAppoinmet = async(req, res) => {
 
 
 
-module.exports = {
-    createAppoinment
-}
+// module.exports = {
+//     createAppoinment
+// }

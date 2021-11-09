@@ -1,15 +1,24 @@
-const { Client, Appoinments, Admin } = require('../../models/index');
+const { sequelize: { Op }, Admin, Token } = require('../../models/index');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //si no hay ningun usuario contenplar eso 
 const getUsers = async(req, res) => {
-    let filter;
-    if (req.query.fullName) {
-        filter = { where: { fullName: req.query.fullName } }
-    } else {
-        filter = {}
+    let filter = {
+        where: {}
     };
+    if (req.query.fullName) {
+        filter = {
+            where: {
+                fullName: {
+                    [Op.like]: req.query.fullName
+                }
+            }
+        };
+    } else {
+        filter = {};
+    };
+
     try {
         const admins = await Admin.findAll(filter);
         res.json(admins);
@@ -86,7 +95,7 @@ const loginUser = async(req, res) => {
             }, 400);
         } else {
             try {
-                const validated = bcrypt.compareSync(req.body.password, user.password);
+                const validated = bcrypt.compareSync(req.body.password, admin.password);
                 if (validated) {
                     const token = jwt.sign({
                         id: admin.id,
@@ -94,6 +103,7 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
+                    await Token.create({ token: token, adminId: admin.id });
                     res.json(token);
                 } else {
                     res.json({
@@ -107,6 +117,25 @@ const loginUser = async(req, res) => {
                 }, 500);
             }
         }
+    }
+};
+
+const logoutUser = async(req, res) => {
+    const userToken = req.token;
+    try {
+        await Token.destroy({
+            where: {
+                token: userToken
+            }
+        });
+        res.json({
+            message: 'your are logout'
+        }, 200);
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
     }
 };
 
@@ -138,6 +167,7 @@ const updateUser = async(req, res) => {
         }, 500);
     }
 };
+
 const deleteUser = async(req, res) => {
     const primaryK = req.params.id
     try {
@@ -166,5 +196,6 @@ module.exports = {
     getUsers,
     updateUser,
     loginUser,
+    logoutUser,
     deleteUser
 }
