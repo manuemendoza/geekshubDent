@@ -10,7 +10,7 @@ const authMiddleWare = require("./auth.js");
 const app = express();
 
 app.use(express.json());
-app.use("/appoinments", routerAppoinments);
+// app.use("/appoinments", routerAppoinments);
 app.use("/clients", routerClients);
 app.use("/admins", routerAdmins);
 

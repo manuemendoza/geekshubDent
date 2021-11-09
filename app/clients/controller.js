@@ -102,8 +102,7 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
-
-                    const createToke = await Token.create({ token: token, userId: client.id  }); //@todo: crear base de datos y ver si esto es viab
+                    await Token.create({ token: token, clientId: client.id });
                     res.json(token);
                 } else {
                     res.json({
@@ -121,13 +120,22 @@ const loginUser = async(req, res) => {
 };
 
 const logoutUser = async(req, res) => {
-    const client = await findOne({
-        where: email //esto esta mal solo es para ver como puedo hacerlo
-    });
-    const usuarioToken = await Token.findOne(client.id)
-    const borradoToken = await Token.destroy({
-        token: usuarioToken.token
-    })
+    const userToken = req.token;
+    try {
+        await Token.destroy({
+            where: {
+                token: userToken
+            }
+        });
+        res.json({
+            message: 'your are logout'
+        }, 200);
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
+    }
 };
 
 const updateUser = async(req, res) => {
@@ -187,5 +195,6 @@ module.exports = {
     getUsers,
     updateUser,
     loginUser,
+    logoutUser,
     deleteUser
 }
