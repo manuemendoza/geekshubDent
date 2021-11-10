@@ -1,20 +1,22 @@
-const { Client, sequelize: { Op }, Token } = require('../../models/index');
+const { Client, Token } = require('../../models/index');
+const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const getUsers = async(req, res) => {
     const name = req.query.fullName;
+
     let filters = {
         where: {}
     };
 
-    if (req.role == 'client') {
-        filters.where.id = req.id;
+    if (req.auth.user.role === 'client') {
+        filters.where.id = req.auth.user.id;
     }
 
     if (name) {
         filters.where.fullName = {
-            [Op.like]: name
+            [Op.like]: `%${req.query.fullName}%`
         };
     }
 
@@ -87,7 +89,7 @@ const loginUser = async(req, res) => {
             messege: "invalid user or password"
         }, 400);
     } else {
-        const client = await Client.findOne({ where: { email: req.query.email } });
+        const client = await Client.findOne({ where: { email: req.body.email } });
         if (!client) {
             res.json({
                 messege: 'invalid user or password'
@@ -102,8 +104,7 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
-                    const createToke = await Token.create({ token: token }); //@todo: crear base de datos y ver si esto es viable
-                    const idAssignment = await Token.create({ userId: client.id });
+                    await Token.create({ token: token, clientId: client.id });
                     res.json(token);
                 } else {
                     res.json({
@@ -121,17 +122,28 @@ const loginUser = async(req, res) => {
 };
 
 const logoutUser = async(req, res) => {
-    const client = await findOne({
-        where: email //esto esta mal solo es para ver como puedo hacerlo
-    });
-    const usuarioToken = await Token.findOne(client.id)
-    const borradoToken = await Token.destroy({
-        token: usuarioToken.token
-    })
+    const token = req.auth.token;
+    console.log(token);
+    try {
+        await Token.update({ token: null }, {
+            where: {
+                token: token
+            }
+        });
+        res.json({
+            message: 'your are logout'
+        }, 200);
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
+    }
 };
 
-const updateUser = async(req, res) => {
 
+
+const updateUser = async(req, res) => {
     try {
         const primaryK = req.params.id;
         const client = await Client.findByPk(primaryK);
@@ -186,5 +198,7 @@ module.exports = {
     getUser,
     getUsers,
     updateUser,
-    loginUser
-}
+    loginUser,
+    logoutUser,
+    deleteUser
+};
