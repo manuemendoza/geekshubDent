@@ -8,6 +8,7 @@ const routerAdmins = require('./admins/router');
 const authMiddleWare = require("./auth");
 
 const app = express();
+
 app.use(express.json());
 // app.use("/appoinments", routerAppoinments);
 app.use("/clients", routerClients);

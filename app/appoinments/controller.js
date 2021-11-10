@@ -1,5 +1,5 @@
 const moment = require('moment');
-const { Appointment, Client, Admin, sequelize: { Op } } = require('../../models/index');
+const { Appointment, Client, Admin } = require('../../models/index');
 const { Op } = require('sequelize')
 
 const appoinmentGetAll = async(req, res) => {
@@ -153,4 +153,3 @@ module.exports = {
     createAppoinment,
     deleteAppoinmet
 };
-
