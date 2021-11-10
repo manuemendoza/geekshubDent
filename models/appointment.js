@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     Appointment.init({
         startsAt: DataTypes.DATE,
         endsAt: DataTypes.DATE,
+        clientID: DataTypes.INTEGER
     }, {
         sequelize,
         modelName: 'Appointment',
