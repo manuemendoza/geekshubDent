@@ -15,4 +15,4 @@ app.use("/admins", routerAdmins);
 app.use("/appoinments", routerAppoinments);
 // app.use("/client", routerClients);
 
-app.listen(7000, () => console.log('El servidor esta levantado en 7000'));
+app.listen(process.env.PORT, () => console.log('El servidor esta levantado en ',process.env.PORT));
