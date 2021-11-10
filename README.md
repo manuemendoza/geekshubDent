@@ -33,7 +33,7 @@ index
 token
 ```
 
-## Rutas
+## Rutas (Client y Admins)
 Sobre las rutas al tener varios modelos , vamos a especificar en uno ya que son bastante parecidos.
 
 en clientes para sus perspectivos login se debia verificar su email y su contraseña generando el debido token y pudiendo registrarlo durante 24h.
