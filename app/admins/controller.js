@@ -1,15 +1,22 @@
-const { Client, Appoinments, Admin } = require('../../models/index');
+const { Admin, Token } = require('../../models/index');
+const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //si no hay ningun usuario contenplar eso 
 const getUsers = async(req, res) => {
-    let filter;
-    if (req.query.fullName) {
-        filter = { where: { fullName: req.query.fullName } }
-    } else {
-        filter = {}
+    let filter = {
+        where: {}
     };
+
+    if (req.query.fullName) {
+        filter.where.fullName = {
+            [Op.like]: `%${req.query.fullName}%`
+        }
+
+        console.log(filter.where.fullName);
+    }
+
     try {
         const admins = await Admin.findAll(filter);
         res.json(admins);
@@ -62,7 +69,7 @@ const createUser = async(req, res) => {
             console.error(error);
             if (error.message == "Validation error") { // @TODO: include mysql validation errors
                 res.json({
-                    message: error.message
+                    message: error.original.message
                 }, 400);
             } else {
                 res.json({
@@ -79,14 +86,14 @@ const loginUser = async(req, res) => {
             messege: "invalid admin or password"
         }, 400);
     } else {
-        const admin = await Admin.findOne({ where: { email: req.query.email } });
+        const admin = await Admin.findOne({ where: { email: req.body.email } });
         if (!admin) {
             res.json({
                 messege: 'invalid admin or password'
             }, 400);
         } else {
             try {
-                const validated = bcrypt.compareSync(req.body.password, user.password);
+                const validated = bcrypt.compareSync(req.body.password, admin.password);
                 if (validated) {
                     const token = jwt.sign({
                         id: admin.id,
@@ -94,6 +101,7 @@ const loginUser = async(req, res) => {
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
+                    await Token.create({ token: token, adminId: admin.id });
                     res.json(token);
                 } else {
                     res.json({
@@ -107,6 +115,26 @@ const loginUser = async(req, res) => {
                 }, 500);
             }
         }
+    }
+};
+
+const logoutUser = async(req, res) => {
+    const token = req.auth.token;
+    console.log(token);
+    try {
+        await Token.update({ token: null }, {
+            where: {
+                token: token
+            }
+        });
+        res.json({
+            message: 'your are logout'
+        }, 200);
+    } catch (error) {
+        console.error(error);
+        res.json({
+            message: error.message
+        }, 500);
     }
 };
 
@@ -138,6 +166,7 @@ const updateUser = async(req, res) => {
         }, 500);
     }
 };
+
 const deleteUser = async(req, res) => {
     const primaryK = req.params.id
     try {
@@ -166,5 +195,6 @@ module.exports = {
     getUsers,
     updateUser,
     loginUser,
+    logoutUser,
     deleteUser
 }
