@@ -201,4 +201,4 @@ module.exports = {
     loginUser,
     logoutUser,
     deleteUser
-}
+};
