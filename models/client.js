@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
             Client.hasMany(models.Appointment, {
                 onDelete: 'cascade'
             })
+            Client.hasMany(models.Token, {
+                onDelete: 'cascade'
+            })
         }
     };
     Client.init({
