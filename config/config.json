@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "root",
-        "password": "password",
-        "database": "geekshubDent_db",
-        "host": "127.0.0.1",
+        "username": "b0e40e6cd042af",
+        "password": "dc9b1715",
+        "database": "heroku_a43d900974e1727",
+        "host": "us-cdbr-east-04.cleardb.com",
         "dialect": "mysql"
     },
     "test": {
