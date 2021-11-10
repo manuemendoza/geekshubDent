@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { Appointment, Client, Admin, sequelize: { Op } } = require('../../models/index');
+const { Op } = require('sequelize')
 
 const appoinmentGetAll = async(req, res) => {
     const date = moment(req.query.startsAt).format("dddd, MMMM Do YYYY, h:mm:ss");
@@ -8,15 +9,15 @@ const appoinmentGetAll = async(req, res) => {
         where: {}
     };
 
-    // if (req.role == 'client') {
-    //     filters.where.id = req.id;
-    // }
+    if (req.auth.user.role === 'client') {
+        filters.where.id = req.auth.user.id;
+    }
 
-    // if (date) {
-    //     filters.where.startsAt = {
-    //         [Op.gte]: date
-    //     }; //@TODO esto no funciona
-    // }
+    if (date) {
+        filters.where.startsAt = {
+            [Op.gte]: `%${req.query.startsAt}%`
+        }; //@TODO esto no funciona
+    }
 
     try {
         const busqueda = await Appointment.findAll(filters);
@@ -46,6 +47,7 @@ const appoinmentGetById = async(req, res) => {
     }
 };
 const createAppoinment = async(req, res) => {
+
     const startAt = moment(req.body.startsAt);
     console.log(startAt);
     const endsAt = startAt.clone().add(2, 'hours');
@@ -63,52 +65,53 @@ const createAppoinment = async(req, res) => {
              * (STARTSAT > appointment.startsAt and STARTSAT < appointments.endsAt) or
              * (ENDSAT > appointment.startsAt and ENDSAT < appointment.endsAt)
              */
-            // const matches = await Appointment.findAll({
-            //     where: {
-            //         [Op.or]: [{
-            //                 startsAt: {
-            //                     [Op.gt]: startAt,
-            //                     [Op.lt]: endsAt
-            //                 }
-            //             },
-            //             {
-            //                 endsAt: {
-            //                     [Op.gt]: startAt,
-            //                     [Op.lt]: endsAt
-            //                 }
-            //             },
-            //             {
-            //                 startsAt: {
-            //                     [Op.lt]: startAt
-            //                 },
-            //                 endsAt: {
-            //                     [Op.gt]: startAt
-            //                 }
-            //             },
-            //             {
-            //                 startsAt: {
-            //                     [Op.lt]: endsAt
-            //                 },
-            //                 endsAt: {
-            //                     [Op.gt]: endsAt
-            //                 }
-            //             }
-            //         ]
-            //     }
-            // });
-            // console.log(matches);
-            // if (matches.length > 0) {
-            //     res.json({
-            //         message: 'timeframe is already taken'
-            //     }, 400);
-            // } else {  //@todo esto no funciona porque no esta pillando bien las fechas
-            const appoinment = await Appointment.create({
-                startsAt: startAt,
-                endsAt: endsAt
+            const matches = await Appointment.findAll({
+                where: {
+                    [Op.or]: [{
+                            startsAt: {
+                                [Op.gt]: `%${startAt}%`,
+                                [Op.lt]: `%${endsAt}%`
+                            }
+                        },
+                        {
+                            endsAt: {
+                                [Op.gt]: `%${startAt}%`,
+                                [Op.lt]: `%${endsAt}%`
+                            }
+                        },
+                        {
+                            startsAt: {
+                                [Op.lt]: `%${startAt}%`
+                            },
+                            endsAt: {
+                                [Op.gt]: `%${startAt}%`
+                            }
+                        },
+                        {
+                            startsAt: {
+                                [Op.lt]: `%${endsAt}%`
+                            },
+                            endsAt: {
+                                [Op.gt]: `%${endsAt}%`
+                            }
+                        }
+                    ]
+                }
             });
-            res.status(200).json({ appoinment, message: 'Su cita ha sido creada' });
-        }
-        // };
+            console.log(matches);
+            if (matches.length > 0) {
+                res.json({
+                    message: 'timeframe is already taken'
+                }, 400);
+            } else {
+                //@todo esto no funciona porque no esta pillando bien las fechas
+                const appoinment = await Appointment.create({
+                    startsAt: startAt,
+                    endsAt: endsAt
+                });
+                res.status(200).json({ appoinment, message: 'Su cita ha sido creada' });
+            }
+        };
     } catch (error) {
         res.status(500).send({
             message: "Ha surgido algún error al intentar crear la cita."

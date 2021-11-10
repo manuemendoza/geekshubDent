@@ -1,4 +1,5 @@
-const { sequelize: { Op }, Admin, Token } = require('../../models/index');
+const { Admin, Token } = require('../../models/index');
+const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -7,17 +8,14 @@ const getUsers = async(req, res) => {
     let filter = {
         where: {}
     };
+
     if (req.query.fullName) {
-        filter = {
-            where: {
-                fullName: {
-                    [Op.like]: req.query.fullName
-                }
-            }
-        };
-    } else {
-        filter = {};
-    };
+        filter.where.fullName = {
+            [Op.like]: `%${req.query.fullName}%`
+        }
+
+        console.log(filter.where.fullName);
+    }
 
     try {
         const admins = await Admin.findAll(filter);
@@ -71,7 +69,7 @@ const createUser = async(req, res) => {
             console.error(error);
             if (error.message == "Validation error") { // @TODO: include mysql validation errors
                 res.json({
-                    message: error.message
+                    message: error.original.message
                 }, 400);
             } else {
                 res.json({
@@ -88,7 +86,7 @@ const loginUser = async(req, res) => {
             messege: "invalid admin or password"
         }, 400);
     } else {
-        const admin = await Admin.findOne({ where: { email: req.query.email } });
+        const admin = await Admin.findOne({ where: { email: req.body.email } });
         if (!admin) {
             res.json({
                 messege: 'invalid admin or password'
@@ -121,11 +119,12 @@ const loginUser = async(req, res) => {
 };
 
 const logoutUser = async(req, res) => {
-    const userToken = req.token;
+    const token = req.auth.token;
+    console.log(token);
     try {
-        await Token.destroy({
+        await Token.update({ token: null }, {
             where: {
-                token: userToken
+                token: token
             }
         });
         res.json({

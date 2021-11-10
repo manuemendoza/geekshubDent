@@ -1,20 +1,22 @@
-const { Client, sequelize: { Op }, Token } = require('../../models/index');
+const { Client, Token } = require('../../models/index');
+const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const getUsers = async(req, res) => {
     const name = req.query.fullName;
+
     let filters = {
         where: {}
     };
 
-    if (req.role == 'client') {
-        filters.where.id = req.id;
+    if (req.auth.user.role === 'client') {
+        filters.where.id = req.auth.user.id;
     }
 
     if (name) {
         filters.where.fullName = {
-            [Op.like]: name
+            [Op.like]: `%${req.query.fullName}%`
         };
     }
 
@@ -87,7 +89,7 @@ const loginUser = async(req, res) => {
             messege: "invalid user or password"
         }, 400);
     } else {
-        const client = await Client.findOne({ where: { email: req.query.email } });
+        const client = await Client.findOne({ where: { email: req.body.email } });
         if (!client) {
             res.json({
                 messege: 'invalid user or password'
@@ -120,11 +122,12 @@ const loginUser = async(req, res) => {
 };
 
 const logoutUser = async(req, res) => {
-    const userToken = req.token;
+    const token = req.auth.token;
+    console.log(token);
     try {
-        await Token.destroy({
+        await Token.update({ token: null }, {
             where: {
-                token: userToken
+                token: token
             }
         });
         res.json({
@@ -138,8 +141,9 @@ const logoutUser = async(req, res) => {
     }
 };
 
-const updateUser = async(req, res) => {
 
+
+const updateUser = async(req, res) => {
     try {
         const primaryK = req.params.id;
         const client = await Client.findByPk(primaryK);
