@@ -9,6 +9,6 @@ router.post('/', auth.checkAdminOrOwn, controller.createUser);
 router.post('/login', controller.loginUser);
 router.post('/logout', auth.checkAdminOrOwn, controller.logoutUser);
 router.put('/:id', auth.checkAdminOrOwn, controller.updateUser);
-router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
+// router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
 
 module.exports = router;
