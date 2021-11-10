@@ -10,18 +10,18 @@ module.exports = {
             },
             startsAt: {
                 type: Sequelize.DATE,
-                notNull: true //2021-10-2 13:30
+                allowNull: false
             },
             endsAt: {
                 type: Sequelize.DATE,
-                notNull: true //2021-10-2 15:30
+                allowNull: false
             },
             createdAt: {
-                notNull: true,
+                allowNull: false,
                 type: Sequelize.DATE
             },
             updatedAt: {
-                notNull: true,
+                allowNull: false,
                 type: Sequelize.DATE
             }
         });
