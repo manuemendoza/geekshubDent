@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { Token } = require('../models/index');
 
-const checkToken = (req, res, next, requiredRole) => {
+const checkToken = async(req, res, next, requiredRole) => {
     let token = null;
     if (req.headers['authorization']) {
         let splitToken = req.headers['authorization'].split(' ');
@@ -11,8 +12,19 @@ const checkToken = (req, res, next, requiredRole) => {
 
 
     if (token) {
-        let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
         try {
+            const userToken = jwt.verify(token, process.env.PRIVATE_KEY);
+            // @TODO: find token in database, if it not exists: user not authorized
+            //
+            const databaseToken = await Token.findOne({
+                where: {
+                    token: userToken,
+                    clientId: userToken.id,
+                    adminId: userToken.id
+                }
+            });
+            console.log(databaseToken);
+            //if (databaseToken) {
             if (requiredRole == 'client' ||
                 userToken.role == 'admin' ||
                 (req.baseUrl === '/clients' && req.params.id == userToken.id) // perfil del propio cliente autenticado
@@ -25,12 +37,17 @@ const checkToken = (req, res, next, requiredRole) => {
 
             } else {
                 res.json({
-                    message: 'user not authorized'
+                    message: 'user not authorizedm 1'
                 }, 403);
             }
+            // } else {
+            //     res.json({
+            //         message: 'user not authenticated 2'
+            //     }, 401);
+            // }
         } catch (error) {
             res.json({
-                message: 'user not authenticated'
+                message: 'user not authenticated 3'
             }, 401);
         }
     } else {

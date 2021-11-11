@@ -3,13 +3,14 @@ const router = require('express').Router();
 const controller = require('./controller');
 const auth = require('../auth.js');
 
-router.get('/:id', controller.getUser);
-router.get('/', controller.getUsers);
+router.get('/:id', auth.checkAdminOrOwn, controller.getUser);
+router.get('/', auth.checkClient, controller.getUsers);
 router.post('/', controller.createUser);
 router.post('/login', controller.loginUser);
 router.post('/logout', auth.checkClient, controller.logoutUser);
-router.put('/:id', auth.checkAdminOrOwn, controller.updateUser);
-// router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
+router.put('/:id', auth.checkClient, controller.updateUser);
+router.delete('/:id', auth.checkAdminOrOwn, controller.deleteUser);
+
 
 
 module.exports = router;
