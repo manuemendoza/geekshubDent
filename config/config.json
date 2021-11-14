@@ -1,9 +1,16 @@
 {
     "development": {
+<<<<<<< HEAD
         "username": "b6fe5dd792400d",
         "password": "a9bd7119",
         "database": "heroku_f440747685aff47",
         "host": "us-cdbr-east-04.cleardb.com",
+=======
+        "username": "root",
+        "password": "251290samuel",
+        "database": "geekshubDent_db",
+        "host": "127.0.0.1",
+>>>>>>> origin
         "dialect": "mysql"
     },
     "test": {
