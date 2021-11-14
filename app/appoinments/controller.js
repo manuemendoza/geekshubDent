@@ -4,7 +4,7 @@ const { Op } = require('sequelize')
 
 const appoinmentGetAll = async(req, res) => {
     const date = moment(req.query.startsAt).format("dddd, MMMM Do YYYY, h:mm:ss");
-    //@gsierra10 @todo el formato moment no sirve porque introuce una fecha siempre y es incompatiple
+    //@todo el formato moment no sirve porque introuce una fecha siempre y es incompatiple
     const filters = {
         where: {}
     };
@@ -46,6 +46,7 @@ const appoinmentGetById = async(req, res) => {
         });
     }
 };
+
 const createAppoinment = async(req, res) => {
 
     const startAt = moment(req.body.startsAt);
@@ -62,7 +63,7 @@ const createAppoinment = async(req, res) => {
              * select * from appointments where
              * (appointments.startsAt > STARTSAT and appointments.startsAt < ENDSAT) or
              * (appointments.endsAt > STARTAT and appointments.endsAt < ENDSAT) or
-             * (STARTSAT > appointment.startsAt and STARTSAT < appointments.endsAt) or
+             * *850(STARTSAT > appointment.startsAt and STARTSAT < appointments.endsAt) or
              * (ENDSAT > appointment.startsAt and ENDSAT < appointment.endsAt)
              */
             const matches = await Appointment.findAll({
@@ -144,8 +145,6 @@ const deleteAppoinmet = async(req, res) => {
         }, 500);
     }
 };
-
-
 
 module.exports = {
     appoinmentGetAll,
