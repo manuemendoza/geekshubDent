@@ -6,20 +6,21 @@ const checkToken = (req, res, next, requiredRole) => {
         let splitToken = req.headers['authorization'].split(' ');
         if (splitToken.length === 2) {
             token = splitToken[1];
-            console.log(token);
         }
     }
+
 
     if (token) {
         let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
         try {
-            console.log(userToken.role);
             if (requiredRole == 'client' ||
                 userToken.role == 'admin' ||
-                (req.path.startsWith('/clients') && req.params.id === userToken.id) // perfil del propio cliente autenticado
+                (req.baseUrl === '/clients' && req.params.id == userToken.id) // perfil del propio cliente autenticado
             ) {
-                req.token = userToken;
-                console.log(userToken);
+                req.auth = {
+                    user: userToken,
+                    token: token
+                };
                 next();
 
             } else {
@@ -34,7 +35,7 @@ const checkToken = (req, res, next, requiredRole) => {
         }
     } else {
         res.json({
-            message: 'user not authenticated'
+            message: 'user not authenticated que te peines 2'
         }, 401);
     }
 }

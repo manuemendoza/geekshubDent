@@ -33,7 +33,7 @@ index
 token
 ```
 
-## Rutas
+## Rutas (Client y Admins)
 Sobre las rutas al tener varios modelos , vamos a especificar en uno ya que son bastante parecidos.
 
 en clientes para sus perspectivos login se debía verificar su email y su contraseña generando el debido token y pudiendo registrarlo durante 24h.
@@ -96,4 +96,8 @@ const createUser = async(req, res) => {
 
 
 ## License
+<<<<<<< HEAD
 [MGS.sl]
+=======
+[Amazon]
+>>>>>>> 15b0bb923b0957001d946935b574c6f31430dca8
