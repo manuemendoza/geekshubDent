@@ -97,15 +97,24 @@ const loginUser = async(req, res) => {
         } else {
             try {
                 const validated = bcrypt.compareSync(req.body.password, client.password);
+                const userData = {
+                    id: client.id,
+                    name: client.name,
+                    surName: client.surName,
+                    role: 'client'
+                };
                 if (validated) {
-                    const token = jwt.sign({
-                        id: client.id,
-                        role: 'client'
-                    }, process.env.PRIVATE_KEY, {
+                    const token = jwt.sign(userData, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
-                    await Token.create({ token: token, clientId: client.id });
-                    res.json(token);
+                    await Token.create({ 
+                        token: token, 
+                        clientId: client.id 
+                    });
+                    res.json({
+                        token,
+                        user: userData
+                    });
                 } else {
                     res.json({
                         message: "invalid user or password"
@@ -154,7 +163,7 @@ const updateUser = async(req, res) => {
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 newData.password = hash;
             };
-            const clientUpdate = await client.update(newData);
+            const clientUpdate = await Client.update(newData);
             res.json(clientUpdate);
         } else {
             res.json({
