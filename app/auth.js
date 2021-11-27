@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { Token } = require('../models/index');
 
-const checkToken = (req, res, next, requiredRole) => {
+const checkToken = async (req, res, next, requiredRole) => {
     let token = null;
     if (req.headers['authorization']) {
         let splitToken = req.headers['authorization'].split(' ');
@@ -13,20 +14,30 @@ const checkToken = (req, res, next, requiredRole) => {
     if (token) {
         let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
         try {
-            if (requiredRole == 'client' ||
-                userToken.role == 'admin' ||
-                (req.baseUrl === '/clients' && req.params.id == userToken.id) // perfil del propio cliente autenticado
-            ) {
-                req.auth = {
-                    user: userToken,
-                    token: token
-                };
-                next();
+            const dbToken = await Token.findOne({
+                where:{token:token}
+            });
+            if (dbToken) {
+            
+                if (requiredRole == 'client' ||
+                    userToken.role == 'admin' ||
+                    (req.baseUrl === '/clients' && req.params.id == userToken.id) // perfil del propio cliente autenticado
+                ) {
+                    req.auth = {
+                        user: userToken,
+                        token: token
+                    };
+                    next();
 
-            } else {
+                } else {
+                    res.json({
+                        message: 'user not authorized'
+                    }, 403);
+                }
+            }else{
                 res.json({
-                    message: 'user not authorized'
-                }, 403);
+                    message:'user not authenticate'
+                },401);
             }
         } catch (error) {
             res.json({
@@ -35,7 +46,7 @@ const checkToken = (req, res, next, requiredRole) => {
         }
     } else {
         res.json({
-            message: 'user not authenticated que te peines 2'
+            message: 'user not authenticated '
         }, 401);
     }
 }

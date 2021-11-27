@@ -175,7 +175,9 @@ const deleteUser = async(req, res) => {
             await admin.destroy({
                 where: { id: primaryK }
             });
-            res.json(admin);
+            res.json({
+                message: 'Admin deleted'
+            });
         } else {
             res.json({
                 messege: 'admin not found'

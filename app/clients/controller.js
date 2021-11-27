@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const getUsers = async(req, res) => {
+const getClients = async(req, res) => {
     const name = req.query.fullName;
 
     let filters = {
@@ -31,7 +31,7 @@ const getUsers = async(req, res) => {
     };
 };
 
-const getUser = async(req, res) => {
+const getClient = async(req, res) => {   
     const primaryK = req.params.id;
     try {
         const client = await Client.findByPk(primaryK);
@@ -50,7 +50,7 @@ const getUser = async(req, res) => {
     }
 };
 
-const createUser = async(req, res) => {
+const createClient = async(req, res) => {
     if (!req.body.password) {
         res.json({
             message: 'password is required'
@@ -83,7 +83,7 @@ const createUser = async(req, res) => {
     };
 };
 
-const loginUser = async(req, res) => {
+const loginClient = async(req, res) => {
     if (!req.body.email || !req.body.password) {
         res.json({
             messege: "invalid user or password"
@@ -121,7 +121,7 @@ const loginUser = async(req, res) => {
     }
 };
 
-const logoutUser = async(req, res) => {
+const logoutClient = async(req, res) => {
     const token = req.auth.token;
     console.log(token);
     try {
@@ -143,7 +143,7 @@ const logoutUser = async(req, res) => {
 
 
 
-const updateUser = async(req, res) => {
+const updateClient = async(req, res) => {
     try {
         const primaryK = req.params.id;
         const client = await Client.findByPk(primaryK);
@@ -169,7 +169,7 @@ const updateUser = async(req, res) => {
     }
 };
 
-const deleteUser = async(req, res) => {
+const deleteClient = async(req, res) => {
     const primaryK = req.params.id;
     try {
         const client = await Client.findByPk(primaryK);
@@ -194,11 +194,11 @@ const deleteUser = async(req, res) => {
 };
 
 module.exports = {
-    createUser,
-    getUser,
-    getUsers,
-    updateUser,
-    loginUser,
-    logoutUser,
-    deleteUser
+    createClient,
+    getClients,
+    getClient,
+    updateClient,
+    loginClient,
+    logoutClient,
+    deleteClient
 };
