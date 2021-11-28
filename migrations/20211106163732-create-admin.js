@@ -8,7 +8,11 @@ module.exports = {
                 allowNull: false,
                 autoIncrement: true
             },
-            fullName: {
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            surName: {
                 type: Sequelize.STRING,
                 allowNull: false
             },

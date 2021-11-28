@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const { Token } = require('../models/index');
+const { Token } = require('../models/index')
 
-const checkToken = async (req, res, next, requiredRole) => {
+const checkToken = async(req, res, next, requiredRole) => {
     let token = null;
     if (req.headers['authorization']) {
         let splitToken = req.headers['authorization'].split(' ');
@@ -10,9 +10,7 @@ const checkToken = async (req, res, next, requiredRole) => {
         }
     }
 
-
     if (token) {
-        let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
         try {
             const dbToken = await Token.findOne({
                 where:{token:token}

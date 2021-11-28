@@ -10,11 +10,17 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
+            Client.hasMany(models.Appointment, {
+                onDelete: 'cascade'
+            })
+            Client.hasMany(models.Token, {
+                onDelete: 'cascade'
+            })
         }
     };
     Client.init({
-        fullName: DataTypes.STRING,
+        name: DataTypes.STRING,
+        surName: DataTypes.STRING,
         email: DataTypes.STRING,
         phoneNumber: DataTypes.INTEGER,
         password: DataTypes.STRING,
