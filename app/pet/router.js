@@ -4,11 +4,11 @@ const controller = require ('./controller.js');
 const auth = require('../auth');
 
 
-router.post('/', auth.checkClient, controller.createPet);
-router.get('/:id', auth.checkAdminOrOwn, controller.getPetById);
-router.get('/', auth.checkAdminOrOwn, controller.getPets);
-router.put('/:id', auth.checkAdminOrOwn, controller.updatePet);
-router.delete('/:id', auth.checkAdminOrOwn, controller.deletePet);
+router.post('/',  controller.createPet);
+router.get('/:id', controller.getPetById);
+router.get('/', controller.getPets);
+router.put('/:id', controller.updatePet);
+router.delete('/:id', controller.deletePet);
 
 
 module.exports = router;

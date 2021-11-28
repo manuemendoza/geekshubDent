@@ -30,7 +30,7 @@ module.exports = {
       },
       medicalHistory: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:true
       },
       idUser: {
         type: Sequelize.INTEGER,

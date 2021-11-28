@@ -1,8 +1,11 @@
 'use strict';
+const bcrypt = require('bcryptjs');
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         let date = new Date();
+        const salt = bcrypt.genSaltSync(7);
+        const hash = bcrypt.hashSync('user', salt);
         let clients = [
         
             {
@@ -10,7 +13,7 @@ module.exports = {
                 surName:"user", 
                 email:"user@user.com", 
                 phoneNumber:"123456",
-                password: "user",
+                password: hash,
                 role: "user",
                 createdAt: date,
                 updatedAt : date

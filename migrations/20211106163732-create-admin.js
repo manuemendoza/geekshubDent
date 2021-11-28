@@ -33,7 +33,7 @@ module.exports = {
             },
             role: {
                 type: Sequelize.STRING,
-                default: "admin",
+                defaultValue: "admin",
                 allowNull: false
             },
             createdAt: {

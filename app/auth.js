@@ -15,6 +15,7 @@ const checkToken = async(req, res, next, requiredRole) => {
             const dbToken = await Token.findOne({
                 where:{token:token}
             });
+            console.log(dbToken);
             if (dbToken) {
             
                 if (requiredRole == 'client' ||

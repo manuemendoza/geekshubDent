@@ -33,7 +33,7 @@ module.exports = {
             },
             role: {
                 type: Sequelize.STRING,
-                default: "user",
+                defaultValue: "client",
                 allowNull: false
             },
             createdAt: {
