@@ -1,14 +1,14 @@
 const router = require ('express').Router();
 
 const controller = require ('./controller.js');
-const auth = require('../../auth');
+const auth = require('../auth');
 
 
-router.post('/',auth.checkUser, controller.createPet);
-router.get('/:id', auth.checkUser, controller.getPetById);
-router.get('/', auth.checkUser, controller.getPets);
-router.put('/:id', auth.checkUser, controller.updatePet);
-router.delete('/:id', auth.checkUser, controller.deletePet);
+router.post('/', auth.checkClient, controller.createPet);
+router.get('/:id', auth.checkAdminOrOwn, controller.getPetById);
+router.get('/', auth.checkAdminOrOwn, controller.getPets);
+router.put('/:id', auth.checkAdminOrOwn, controller.updatePet);
+router.delete('/:id', auth.checkAdminOrOwn, controller.deletePet);
 
 
 module.exports = router;
