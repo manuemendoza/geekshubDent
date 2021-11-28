@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     breed: DataTypes.STRING,
     gender: DataTypes.STRING,
     information: DataTypes.STRING,
-    idUser: DataTypes.INTEGER
+    idUser: DataTypes.INTEGER,
+    medicalHistory: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Pet',

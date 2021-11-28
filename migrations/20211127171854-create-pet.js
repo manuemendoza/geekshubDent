@@ -28,6 +28,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull:false
       },
+      medicalHistory: {
+        type: Sequelize.STRING,
+        allowNull:false
+      },
       idUser: {
         type: Sequelize.INTEGER,
         allowNull:false
