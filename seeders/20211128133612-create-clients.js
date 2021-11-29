@@ -14,7 +14,6 @@ module.exports = {
                 email:"user@user.com", 
                 phoneNumber:"123456",
                 password: hash,
-                role: "user",
                 createdAt: date,
                 updatedAt : date
             }

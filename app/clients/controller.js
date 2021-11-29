@@ -101,6 +101,8 @@ const loginClient = async(req, res) => {
                     id: client.id,
                     name: client.name,
                     surName: client.surName,
+                    email: client.email,
+                    telephone: client.phoneNumber,
                     role: 'client'
                 };
                 if (validated) {
