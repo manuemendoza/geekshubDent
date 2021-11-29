@@ -12,11 +12,11 @@ const checkToken = async(req, res, next, requiredRole) => {
 
     if (token) {
         try {
-            const dbToken = await Token.findOne({
-                where:{token:token}
-            });
-            console.log(dbToken);
-            if (dbToken) {
+            // const dbToken = await Token.findOne({
+            //     where:{token:token}
+            // });
+            // console.log(dbToken);
+            // if (dbToken) {
             
                 if (requiredRole == 'client' ||
                     userToken.role == 'admin' ||
@@ -33,11 +33,11 @@ const checkToken = async(req, res, next, requiredRole) => {
                         message: 'user not authorized'
                     }, 403);
                 }
-            }else{
-                res.json({
-                    message:'user not authenticate'
-                },401);
-            }
+            // }else{
+            //     res.json({
+            //         message:'user not authenticate'
+            //     },401);
+            // }
         } catch (error) {
             res.json({
                 message: 'user not authenticated'

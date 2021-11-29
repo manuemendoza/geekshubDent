@@ -102,11 +102,15 @@ const loginClient = async(req, res) => {
                     name: client.name,
                     surName: client.surName,
                     email: client.email,
-                    telephone: client.phoneNumber,
-                    role: 'client'
+                    phoneNumber: client.phoneNumber
                 };
                 if (validated) {
-                    const token = jwt.sign(userData, process.env.PRIVATE_KEY, {
+                    const token = jwt.sign(
+                        {
+                            id: client.id,
+                            role: 'client'
+                        }
+                        , process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
                     });
                     await Token.create({ 
