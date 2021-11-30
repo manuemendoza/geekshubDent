@@ -17,7 +17,7 @@ const checkToken = async(req, res, next, requiredRole) => {
             // });
             // console.log(dbToken);
             // if (dbToken) {
-            
+                let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
                 if (requiredRole == 'client' ||
                     userToken.role == 'admin' ||
                     (req.baseUrl === '/clients' && req.params.id == userToken.id) // perfil del propio cliente autenticado
@@ -45,7 +45,7 @@ const checkToken = async(req, res, next, requiredRole) => {
         }
     } else {
         res.json({
-            message: 'user not authenticated '
+            message: 'user not authenticated'
         }, 401);
     }
 }

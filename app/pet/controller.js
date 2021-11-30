@@ -9,6 +9,9 @@ const getPets = async(req, res) => {
     let filters = {
         where: {}
     }
+    if (req.auth.user.role === 'client') {
+        filters.where.id = req.auth.user.id;
+    }
 
     if (name) {
         filters.where.name = {

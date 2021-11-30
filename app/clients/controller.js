@@ -159,17 +159,27 @@ const logoutClient = async(req, res) => {
 
 
 const updateClient = async(req, res) => {
+    
+    
+    
     try {
+
         const primaryK = req.params.id;
         const client = await Client.findByPk(primaryK);
         const newData = req.body;
+        console.log(newData.surName);
+
         if (client) {
             if (req.body.password) {
                 const salt = bcrypt.genSaltSync(7);
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 newData.password = hash;
             };
-            const clientUpdate = await Client.update(newData);
+            const clientUpdate = await Client.update({ newData }, {
+                where: {
+                    id: primaryK
+                }
+            });
             res.json(clientUpdate);
         } else {
             res.json({
