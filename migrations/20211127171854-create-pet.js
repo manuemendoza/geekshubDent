@@ -34,7 +34,7 @@ module.exports = {
       },
       doctor: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:true
       },
       idUser: {
         type: Sequelize.INTEGER,
