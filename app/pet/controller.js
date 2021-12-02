@@ -10,7 +10,7 @@ const getPets = async(req, res) => {
         where: {}
     }
     if (req.auth.user.role === 'client') {
-        filters.where.id = req.auth.user.id;
+        filters.where.idUser = req.auth.user.id;
     }
 
     if (name) {

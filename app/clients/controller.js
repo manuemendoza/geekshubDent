@@ -145,7 +145,7 @@ const logoutClient = async(req, res) => {
                 token: token
             }
         });
-        res.json({
+        res. json({
             message: 'your are logout'
         }, 200);
     } catch (error) {
@@ -160,14 +160,12 @@ const logoutClient = async(req, res) => {
 
 const updateClient = async(req, res) => {
     
-    
-    
     try {
 
         const primaryK = req.params.id;
         const client = await Client.findByPk(primaryK);
         const newData = req.body;
-        console.log(newData.surName);
+        console.log(req.body); 
 
         if (client) {
             if (req.body.password) {
@@ -175,12 +173,26 @@ const updateClient = async(req, res) => {
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 newData.password = hash;
             };
-            const clientUpdate = await Client.update({ newData }, {
-                where: {
-                    id: primaryK
-                }
-            });
-            res.json(clientUpdate);
+            try {
+                const clientUpdate = await Client.update({ 
+                    name: newData.name,
+                    surName: newData.surName,
+                    email: newData.email,
+                    phoneNumber: newData.phoneNumber,
+                    password: newData.password,
+                }, {
+                    where: {
+                        id: primaryK
+                    },
+                });
+                res.json(clientUpdate);//aqui no me devuelve el objeto entero solo el puto boolean
+            } catch (error) {
+                console.error(error);
+                res.status(400).json({
+                    message: error.message
+                });
+            }
+            
         } else {
             res.json({
                 message: 'user not found'

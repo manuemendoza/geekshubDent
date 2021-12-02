@@ -94,6 +94,13 @@ const loginUser = async(req, res) => {
         } else {
             try {
                 const validated = bcrypt.compareSync(req.body.password, admin.password);
+                const adminData = {
+                    id: admin.id,
+                    name: admin.name,
+                    surName: admin.surName,
+                    email: admin.email,
+                    phoneNumber: admin.phoneNumber
+                };
                 if (validated) {
                     const token = jwt.sign({
                         id: admin.id,
@@ -102,7 +109,10 @@ const loginUser = async(req, res) => {
                         expiresIn: '24h'
                     });
                     await Token.create({ token: token, adminId: admin.id });
-                    res.json(token);
+                    res.json({
+                        token,
+                        admin: adminData
+                    });
                 } else {
                     res.json({
                         message: "invalid admin or password"
@@ -151,12 +161,23 @@ const updateUser = async(req, res) => {
                 newData.password = hash;
             };
 
-            const adminUpdate = await admin.update(newData);;
-            res.json(adminUpdate);
+            const adminUpdate = await admin.update({ 
+                name: newData.name,
+                surName: newData.surName,
+                email: newData.email,
+                phoneNumber: newData.phoneNumber,
+                password: newData.password,
+            }, {
+                where: {
+                    id: primaryK
+                },
+            });;
+
+            res.json(adminUpdate);//pero aqui si me cago en la puta
 
         } else {
             res.json({
-                message: 'user not found'
+                message: 'admin not found'
             }, 404);
         }
     } catch (error) {
